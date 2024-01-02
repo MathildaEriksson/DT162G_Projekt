@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const Recepie = require('../models/recepie.model');
 
-// GET Visa alla kurser
+// GET Show all recepies
 router.get('/', async (req, res) => {
     try {
         const recepies = await Recepie.find();

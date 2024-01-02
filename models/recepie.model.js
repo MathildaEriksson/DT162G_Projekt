@@ -8,7 +8,8 @@ const recepieSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true
+    required: true, 
+    enum: ['Dessert', 'Huvudrätt', 'Förrätt', 'Sallad', 'Annat']
   },
   ingredients: [
     {
@@ -17,16 +18,14 @@ const recepieSchema = new mongoose.Schema({
       unit: String
     }
   ], 
-  instructions: {
-    type: String,
-    required: true,
-  }, 
+  instructions: [String], // Array of strings for step by step instructions
+  image: String, // URL to recepie image
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
-});
+  }, 
+}, { timestamps: true });
 
 const Recepie = mongoose.model('Recepie', recepieSchema);
 
