@@ -4,24 +4,24 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 
-// Anslut till MongoDB
+// Connect to MongoDB
 mongoose.connect('mongodb://localhost/recepieVaultDB')
   .then(() => console.log('Ansluten till MongoDB.'))
   .catch(err => console.error('Kunde inte ansluta till MongoDB.', err));
 
-// Aktivera CORS
+// Activate CORS
 //app.use(cors());
 
-// Middleware för att parsa JSON
+// Middleware for parsing JSON
 app.use(express.json());
 
-// Importera routes
+// Import routes
 const recepiesRoutes = require('./routes/recepies');
 
-// Använd routes
+// Use routes
 app.use('/recepies', recepiesRoutes);
 
-// Starta server
+// Start server
 app.listen(port, () => {
   console.log(`Servern är igång på http://localhost:${port}`);
 });

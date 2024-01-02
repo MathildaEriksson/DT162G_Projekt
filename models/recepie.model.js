@@ -1,3 +1,4 @@
+//Mathilda Eriksson, DT162G, HT23
 const mongoose = require('mongoose');
 
 const recepieSchema = new mongoose.Schema({

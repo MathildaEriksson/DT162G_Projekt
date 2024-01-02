@@ -13,3 +13,5 @@ router.get('/', async (req, res) => {
         res.status(500).send('Serverfel vid hämtning av recept.');
     }
 });
+
+module.exports = router;
