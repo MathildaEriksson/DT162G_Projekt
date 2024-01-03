@@ -33,6 +33,29 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET search recepie (only name)
+router.get("/search", async (req, res) => {
+  try {
+      const searchQuery = req.query.name; // Get search-term from query-parameter 'name'
+      
+      if (!searchQuery) {
+          return res.status(400).send("Ange ett sökord.");
+      }
+
+      // Use regex to search without case sensitivity
+      const regex = new RegExp(searchQuery, 'i');
+      const recepies = await Recepie.find({ name: { $regex: regex }});
+
+      if (recepies.length === 0) {
+          return res.status(404).send("Inga recept hittades med det angivna namnet.");
+      }
+
+      res.json(recepies);
+  } catch (error) {
+      res.status(500).send("Serverfel vid sökning av recept: " + error.message);
+  }
+});
+
 // GET Show recepie with specific ID
 router.get("/:id", async (req, res) => {
   try {
@@ -120,7 +143,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       }
     }
 
-    // Uppdate recepie
+    // Update recepie
     const updatedRecepie = await Recepie.findByIdAndUpdate(
       req.params.id,
       {
