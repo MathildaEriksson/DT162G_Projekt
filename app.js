@@ -18,6 +18,9 @@ mongoose.connect('mongodb://localhost/recepieVaultDB')
 // Middleware for parsing JSON
 app.use(express.json());
 
+// Middleware to serve uploaded images
+app.use('/uploads', express.static('uploads'));
+
 // Import routes
 const recepiesRoutes = require('./routes/recepies');
 const usersRoutes = require('./routes/users');

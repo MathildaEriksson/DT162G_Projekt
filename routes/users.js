@@ -3,9 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user.model');
+const verifyToken = require('../middleware/verifyToken');
 
 // GET Show all users
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);

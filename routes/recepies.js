@@ -3,7 +3,25 @@
 const express = require("express");
 const router = express.Router();
 const Recepie = require("../models/recepie.model");
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require("../middleware/verifyToken");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+// Multer config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // GET Show all recepies
 router.get("/", async (req, res) => {
@@ -38,14 +56,24 @@ router.delete("/:id", verifyToken, async (req, res) => {
 });
 
 // POST Add recepie
-router.post("/", verifyToken, async (req, res) => {
-  // Creates a new recepie object with data from request body
+router.post("/", verifyToken, upload.single("image"), async (req, res) => {
+  let imagePath = "";
+  if (req.file) {
+    imagePath = req.file.path;
+  }
+
+  // Convert ingredients from string to object
+  let ingredients = req.body.ingredients;
+  if (typeof ingredients === "string") {
+    ingredients = JSON.parse(ingredients);
+  }
+
   const newRecepie = new Recepie({
     name: req.body.name,
     category: req.body.category,
-    ingredients: req.body.ingredients, // Should be an array of objects with name, amount and unit
+    ingredients: ingredients, // Should be an array of objects with name, amount and unit
     instructions: req.body.instructions, // Should be an array of strings
-    image: req.body.image,
+    image: imagePath,
     createdBy: req.user._id,
   });
 
@@ -54,35 +82,66 @@ router.post("/", verifyToken, async (req, res) => {
     const savedRecepie = await newRecepie.save();
     res.status(201).json(savedRecepie);
   } catch (error) {
+    // If something goes wrong, remove uploaded file
+    if (req.file) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Fel vid borttagning av fil: ", err);
+      });
+    }
     res.status(500).send("Serverfel vid skapande av recept.");
   }
 });
 
-router.put("/:id", verifyToken, async (req, res) => {
+// PUT update recipe with specific ID
+router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
   try {
-    const recepie = await Recepie.findByIdAndUpdate(
+    const recepieToUpdate = await Recepie.findById(req.params.id);
+    if (!recepieToUpdate) {
+      return res.status(404).send("Receptet hittades inte.");
+    }
+
+    // Convert ingredients from string to object
+    let ingredients = req.body.ingredients;
+    if (typeof ingredients === "string") {
+      ingredients = JSON.parse(ingredients);
+    }
+
+    let imagePath = recepieToUpdate.image; // Keep current image as standard
+
+    // If a new image is uploaded, uppdate path and remove old image
+    if (req.file) {
+      imagePath = req.file.path;
+
+      // Remove old image if it exists
+      if (recepieToUpdate.image) {
+        fs.unlink(path.join(__dirname, "..", recepieToUpdate.image), (err) => {
+          if (err) console.error("Fel vid borttagning av gammal bild: ", err);
+        });
+      }
+    }
+
+    // Uppdate recepie
+    const updatedRecepie = await Recepie.findByIdAndUpdate(
       req.params.id,
       {
         name: req.body.name,
         category: req.body.category,
-        ingredients: req.body.ingredients, // Should be an array of objects with name, amount and unit
-        instructions: req.body.instructions, // Should be an array of strings
-        image: req.body.image,
+        ingredients: ingredients,
+        instructions: req.body.instructions,
+        image: imagePath,
         createdBy: req.user._id,
       },
-      { new: true, runValidators: true } // new: true returnerar det uppdaterade dokumentet, runValidators: true ser till att Mongoose valideringar körs vid uppdatering
+      { new: true, runValidators: true }
     );
 
-    if (!recepie) {
-      return res.status(404).send("Receptet hittades inte.");
-    }
-
-    res.json(recepie);
+    res.json(updatedRecepie);
   } catch (error) {
     if (error.name === "ValidationError") {
       res.status(400).send("Valideringsfel: " + error.message);
     } else {
-      res.status(500).send("Serverfel vid uppdatering av recept.");
+      res
+        .status(500)
+        .send("Serverfel vid uppdatering av recept: " + error.message);
     }
   }
 });

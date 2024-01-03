@@ -2,11 +2,12 @@
 
 const jwt = require('jsonwebtoken');
 
+// Verifies JWT
 const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization');
     if (!authHeader) return res.status(401).send('Åtkomst nekad.');
 
-    // Split header to get only token part, not Bearer
+    // Split header to get only token part
     const token = authHeader.split(' ')[1]; // Bearer YOUR_JWT_TOKEN
 
     try {
