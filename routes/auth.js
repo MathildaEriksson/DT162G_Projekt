@@ -18,7 +18,29 @@ router.post('/login', async (req, res) => {
         expiresIn: "24h" 
     });
 
-    res.header('auth-token', token).send(token);
+    res.header('Authorization', 'Bearer ' + token).send(token);
+});
+
+// Register new user
+router.post('/register', async (req, res) => {
+    // Check if email/user already exists
+    const userExists = await User.findOne({ email: req.body.email });
+    if (userExists) return res.status(400).send('E-postadressen används redan.');
+
+    // Create new user
+    const user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password
+    });
+
+    try {
+        // Save user in db
+        await user.save();
+        res.status(201).send('Användare skapad.');
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
 });
 
 module.exports = router;
