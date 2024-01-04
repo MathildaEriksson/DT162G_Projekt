@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 // GET Show all recepies
 router.get("/", async (req, res) => {
   try {
-    const recepies = await Recepie.find().populate('createdBy', 'name');
+    const recepies = await Recepie.find().populate("createdBy", "name");
     res.json(recepies);
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av recept.");
@@ -44,7 +44,10 @@ router.get("/search", async (req, res) => {
 
     // Use regex to search without case sensitivity
     const regex = new RegExp(searchQuery, "i");
-    const recepies = await Recepie.find({ name: { $regex: regex } }).populate('createdBy', 'name');
+    const recepies = await Recepie.find({ name: { $regex: regex } }).populate(
+      "createdBy",
+      "name"
+    );
 
     if (recepies.length === 0) {
       return res
@@ -62,7 +65,10 @@ router.get("/search", async (req, res) => {
 router.get("/myrecepies", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id; // Get user-ID from JWT
-    const recepies = await Recepie.find({ createdBy: userId }).populate('createdBy', 'name'); // Find recepies by user
+    const recepies = await Recepie.find({ createdBy: userId }).populate(
+      "createdBy",
+      "name"
+    ); // Find recepies by user
 
     if (recepies.length == 0) {
       // If user has no recepies, send custom message
@@ -77,7 +83,10 @@ router.get("/myrecepies", verifyToken, async (req, res) => {
 // GET Show recepie with specific ID
 router.get("/:id", async (req, res) => {
   try {
-    const recepie = await Recepie.findById(req.params.id).populate('createdBy', 'name');
+    const recepie = await Recepie.findById(req.params.id).populate(
+      "createdBy",
+      "name"
+    );
     if (!recepie) return res.status(404).send("Receptet hittades inte.");
     res.json(recepie);
   } catch (error) {
@@ -88,8 +97,20 @@ router.get("/:id", async (req, res) => {
 // DELETE Delete recepie with specific ID
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
-    const recepie = await Recepie.findByIdAndDelete(req.params.id);
-    if (!recepie) return res.status(404).send("Receptet hittades inte.");
+    const recepie = await Recepie.findById(req.params.id);
+
+    if (!recepie) {
+      return res.status(404).send("Receptet hittades inte.");
+    }
+
+    //Check if logged in user is the creator of the recepie
+    if (recepie.createdBy.toString() !== req.user._id) {
+      return res
+        .status(403)
+        .send("Åtkomst nekad. Du kan endast ta bort recept du själv skapat.");
+    }
+
+    await Recepie.findByIdAndDelete(req.params.id);
     res.send("Receptet har raderats.");
   } catch (error) {
     res.status(500).send("Serverfel vid radering av recept.");
@@ -141,6 +162,13 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       return res.status(404).send("Receptet hittades inte.");
     }
 
+    //Check if logged in user is the creator of the recepie
+    if (recepieToUpdate.createdBy.toString() !== req.user._id) {
+      return res
+        .status(403)
+        .send("Åtkomst nekad. Du kan endast redigera recept du själv skapat.");
+    }
+
     // Convert ingredients from string to object
     let ingredients = req.body.ingredients;
     if (typeof ingredients === "string") {
@@ -169,8 +197,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
         category: req.body.category,
         ingredients: ingredients,
         instructions: req.body.instructions,
-        image: imagePath,
-        createdBy: req.user._id,
+        image: imagePath
       },
       { new: true, runValidators: true }
     );
