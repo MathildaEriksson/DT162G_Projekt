@@ -36,23 +36,41 @@ router.get("/", async (req, res) => {
 // GET search recepie (only name)
 router.get("/search", async (req, res) => {
   try {
-      const searchQuery = req.query.name; // Get search-term from query-parameter 'name'
-      
-      if (!searchQuery) {
-          return res.status(400).send("Ange ett sökord.");
-      }
+    const searchQuery = req.query.name; // Get search-term from query-parameter 'name'
 
-      // Use regex to search without case sensitivity
-      const regex = new RegExp(searchQuery, 'i');
-      const recepies = await Recepie.find({ name: { $regex: regex }});
+    if (!searchQuery) {
+      return res.status(400).send("Ange ett sökord.");
+    }
 
-      if (recepies.length === 0) {
-          return res.status(404).send("Inga recept hittades med det angivna namnet.");
-      }
+    // Use regex to search without case sensitivity
+    const regex = new RegExp(searchQuery, "i");
+    const recepies = await Recepie.find({ name: { $regex: regex } });
 
-      res.json(recepies);
+    if (recepies.length === 0) {
+      return res
+        .status(404)
+        .send("Inga recept hittades med det angivna namnet.");
+    }
+
+    res.json(recepies);
   } catch (error) {
-      res.status(500).send("Serverfel vid sökning av recept: " + error.message);
+    res.status(500).send("Serverfel vid sökning av recept: " + error.message);
+  }
+});
+
+// GET logged in users recepies
+router.get("/myrecepies", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user._id; // Get user-ID from JWT
+    const recepies = await Recepie.find({ createdBy: userId }); // Find recepies by user
+
+    if (recepies.length == 0) {
+      // If user has no recepies, send custom message
+      return res.status(404).send("Du har inga recept än.");
+    }
+    res.json(recepies);
+  } catch (error) {
+    res.status(500).send("Serverfel vid hämtning av användarens recept.");
   }
 });
 

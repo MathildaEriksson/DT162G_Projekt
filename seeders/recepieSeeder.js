@@ -23,7 +23,7 @@ const recepiesData = [
         'Häll smeten i en smord och bröad form.',
         'Grädda i mitten av ugnen i cirka 20 minuter.'
       ],
-      image: 'url-till-chokladkaka.jpg'
+      image: 'chokladkaka.png'
     },
     {
       name: 'Caesarsallad',
@@ -43,7 +43,7 @@ const recepiesData = [
         'Blanda salladen med dressing, krutonger, bacon och kyckling.',
         'Toppa med riven parmesanost.'
       ],
-      image: 'url-till-caesarsallad.jpg'
+      image: 'caesarsallad.png'
     },
     {
       name: 'Pasta Carbonara',
@@ -65,7 +65,7 @@ const recepiesData = [
         'Tillsätt bacon och resten av parmesanosten. Krydda med salt och peppar.',
         'Servera direkt.'
       ],
-      image: 'url-till-pasta-carbonara.jpg'
+      image: 'pastacarbonara.png'
     },
   ];
   
