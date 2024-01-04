@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 // GET Show all recepies
 router.get("/", async (req, res) => {
   try {
-    const recepies = await Recepie.find();
+    const recepies = await Recepie.find().populate('createdBy', 'name');
     res.json(recepies);
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av recept.");
@@ -44,7 +44,7 @@ router.get("/search", async (req, res) => {
 
     // Use regex to search without case sensitivity
     const regex = new RegExp(searchQuery, "i");
-    const recepies = await Recepie.find({ name: { $regex: regex } });
+    const recepies = await Recepie.find({ name: { $regex: regex } }).populate('createdBy', 'name');
 
     if (recepies.length === 0) {
       return res
@@ -62,7 +62,7 @@ router.get("/search", async (req, res) => {
 router.get("/myrecepies", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id; // Get user-ID from JWT
-    const recepies = await Recepie.find({ createdBy: userId }); // Find recepies by user
+    const recepies = await Recepie.find({ createdBy: userId }).populate('createdBy', 'name'); // Find recepies by user
 
     if (recepies.length == 0) {
       // If user has no recepies, send custom message
@@ -77,7 +77,7 @@ router.get("/myrecepies", verifyToken, async (req, res) => {
 // GET Show recepie with specific ID
 router.get("/:id", async (req, res) => {
   try {
-    const recepie = await Recepie.findById(req.params.id);
+    const recepie = await Recepie.findById(req.params.id).populate('createdBy', 'name');
     if (!recepie) return res.status(404).send("Receptet hittades inte.");
     res.json(recepie);
   } catch (error) {
