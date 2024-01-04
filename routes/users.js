@@ -8,7 +8,7 @@ const verifyToken = require('../middleware/verifyToken');
 // GET Show all users
 router.get('/', verifyToken, async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await User.find().select('-password');
         res.json(users);
     } catch (error) {
         res.status(500).send('Serverfel vid hämtning av användare.');
