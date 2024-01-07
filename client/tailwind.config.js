@@ -4,8 +4,18 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        recepievaultred: '#8D0000',
+      },
+      fontFamily: {
+        'merriweather': ['Merriweather', 'serif'], 
+        'sans': ['Noto Sans', 'sans-serif'],
+      },
+    },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }
 

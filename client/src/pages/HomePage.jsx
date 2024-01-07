@@ -4,8 +4,8 @@ import React from 'react';
 
 const HomePage = () => {
     return (
-        <div>
-            <h1>Välkommen till ReceptAppen!</h1>
+        <div class="pl-10">
+            <h1 class="text-3xl font-merriweather pb-4">Välkommen till Recepie Vault!</h1>
             <p>Här kan du hitta en mängd olika recept för alla smaker.</p>
         </div>
     );
