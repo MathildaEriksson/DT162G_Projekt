@@ -61,20 +61,13 @@ router.get("/search", async (req, res) => {
   }
 });
 
-// GET logged in users recepies
+// GET logged in users recipes
 router.get("/myrecepies", verifyToken, async (req, res) => {
   try {
-    const userId = req.user._id; // Get user-ID from JWT
-    const recepies = await Recepie.find({ createdBy: userId }).populate(
-      "createdBy",
-      "name"
-    ); // Find recepies by user
+    const userId = req.user._id;
+    const recepies = await Recepie.find({ createdBy: userId }).populate("createdBy", "name");
 
-    if (recepies.length == 0) {
-      // If user has no recepies, send custom message
-      return res.status(404).send("Du har inga recept än.");
-    }
-    res.json(recepies);
+    res.json(recepies); 
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av användarens recept.");
   }

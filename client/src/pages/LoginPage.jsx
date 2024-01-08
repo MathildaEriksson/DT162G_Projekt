@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 import API from "../services/axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { XCircleIcon } from "@heroicons/react/20/solid";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,10 +19,15 @@ const LoginPage = () => {
         password,
       });
       localStorage.setItem("token", response.data);
-      navigate('/my-pages'); // Navigera till UserPage
+      setErrorMessage("");
+      navigate("/my-pages"); 
     } catch (error) {
-      console.error("Login failed:", error);
-      // Hantera felmeddelanden
+      if (error.response && error.response.data) {
+        setErrorMessage(error.response.data);
+      } else {
+        // Show generic error message
+        setErrorMessage("Inloggningen misslyckades. Vänligen försök igen.");
+      }
     }
   };
 
@@ -85,7 +92,23 @@ const LoginPage = () => {
               />
             </div>
           </div>
-
+          {errorMessage && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <XCircleIcon
+                    className="h-5 w-5 text-red-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                  {errorMessage}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             <button
               type="submit"

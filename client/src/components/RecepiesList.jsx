@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import API from "../services/axios";
 
-const RecipesList = () => {
-  const [recipes, setRecipes] = useState([]);
-
-  useEffect(() => {
-    API.get("recepies")
-      .then((response) => {
-        setRecipes(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the recipes", error);
-      });
-  }, []);
+const RecipesList = ({ recipes }) => {
 
   return (
     <div>
