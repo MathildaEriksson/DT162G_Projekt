@@ -65,9 +65,12 @@ router.get("/search", async (req, res) => {
 router.get("/myrecipes", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const recipes = await Recipe.find({ createdBy: userId }).populate("createdBy", "name");
+    const recipes = await Recipe.find({ createdBy: userId }).populate(
+      "createdBy",
+      "name"
+    );
 
-    res.json(recipes); 
+    res.json(recipes);
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av användarens recept.");
   }
@@ -96,11 +99,21 @@ router.delete("/:id", verifyToken, async (req, res) => {
       return res.status(404).send("Receptet hittades inte.");
     }
 
-    //Check if logged in user is the creator of the recipe
+    // Check if logged-in user is the creator of the recipe
     if (recipe.createdBy.toString() !== req.user._id) {
       return res
         .status(403)
         .send("Åtkomst nekad. Du kan endast ta bort recept du själv skapat.");
+    }
+
+    // Check if recipe has an image and delete it
+    if (recipe.image) {
+      const imagePath = path.join(__dirname, "../uploads", recipe.image);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("Error deleting image file:", err);
+        }
+      });
     }
 
     await Recipe.findByIdAndDelete(req.params.id);
@@ -123,7 +136,7 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     ingredients = JSON.parse(ingredients);
   }
 
-  // Convert ingridients back to an array
+  // Convert instructions back to an array
   let instructions = [];
   if (typeof req.body.instructions === "string") {
     instructions = JSON.parse(req.body.instructions);
@@ -145,11 +158,11 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   } catch (error) {
     // If something goes wrong, remove uploaded file
     if (req.file) {
-      fs.unlink(req.file.path, (err) => {
+      fs.unlink(req.file.filepath, (err) => {
         if (err) console.error("Fel vid borttagning av fil: ", err);
       });
     }
-    res.status(500).send("Serverfel vid skapande av recept.");
+    res.status(500).send("Serverfel vid skapande av recept." + error.message);
   }
 });
 
@@ -174,6 +187,12 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       ingredients = JSON.parse(ingredients);
     }
 
+    // Convert instructions back to an array
+    let instructions = [];
+    if (typeof req.body.instructions === "string") {
+      instructions = JSON.parse(req.body.instructions);
+    }
+
     let imagePath = recipeToUpdate.image; // Keep current image as standard
 
     // If a new image is uploaded, uppdate path and remove old image
@@ -195,8 +214,8 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
         name: req.body.name,
         category: req.body.category,
         ingredients: ingredients,
-        instructions: req.body.instructions,
-        image: imagePath
+        instructions: instructions,
+        image: imagePath,
       },
       { new: true, runValidators: true }
     );
