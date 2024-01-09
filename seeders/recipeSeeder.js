@@ -1,8 +1,8 @@
 //Mathilda Eriksson, DT162G, HT23
-const Recepie = require('../models/recepie.model');
+const Recipe = require('../models/recipe.model');
 
-// Recepiedata to seed
-const recepiesData = [
+// Recipedata to seed
+const recipesData = [
     {
       name: 'Chokladkaka',
       category: 'Dessert',
@@ -134,12 +134,12 @@ const recepiesData = [
   ];
   
   
- // Create recepie
-const seedRecepies = async (createdUserId) => {
+ // Create recipe
+const seedRecipes = async (createdUserId) => {
     try {
-      for (let recepieData of recepiesData) {
-        const recepie = { ...recepieData, createdBy: createdUserId };
-        await Recepie.create(recepie);
+      for (let recipeData of recipesData) {
+        const recipe = { ...recipeData, createdBy: createdUserId };
+        await Recipe.create(recipe);
       }
       console.log('Recept seedade i databasen.');
     } catch (err) {
@@ -147,4 +147,4 @@ const seedRecepies = async (createdUserId) => {
     } 
   };
   
-  module.exports = seedRecepies;
+  module.exports = seedRecipes;

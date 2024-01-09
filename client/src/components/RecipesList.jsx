@@ -20,7 +20,7 @@ const RecipesList = ({ recipes }) => {
             <div className="mt-4 flex justify-between">
               <div>
                 <h3 className="text-lg text-gray-700">
-                  <Link to={`/recepies/${recipe._id}`}>
+                  <Link to={`/recipes/${recipe._id}`}>
                     <span aria-hidden="true" className="absolute inset-0" />
                     {recipe.name}
                   </Link>

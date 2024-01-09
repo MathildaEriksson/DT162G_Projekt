@@ -1,14 +1,14 @@
 //Mathilda Eriksson, DT162G, HT23
 
 import React, { useState, useEffect } from "react";
-import RecepiesList from "../components/RecepiesList";
+import RecipesList from "../components/RecipesList";
 import API from "../services/axios";
 
-const RecepiesPage = () => {
+const RecipesPage = () => {
   const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
-    API.get("recepies")
+    API.get("recipes")
       .then((response) => {
         setRecipes(response.data);
       })
@@ -20,9 +20,9 @@ const RecepiesPage = () => {
   return (
     <div className="lg:pl-10 pl-2">
       <h1 className="text-3xl font-merriweather pb-4">Alla recept</h1>
-      <RecepiesList recipes={recipes}/>
+      <RecipesList recipes={recipes}/>
     </div>
   );
 };
 
-export default RecepiesPage;
+export default RecipesPage;

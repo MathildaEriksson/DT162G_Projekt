@@ -1,3 +1,5 @@
+//Mathilda Eriksson, DT162G, HT23
+
 import { Fragment, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
@@ -19,7 +21,7 @@ export default function Header() {
   const location = useLocation();
   const [navigation, setNavigation] = useState([
     { name: "Hem", to: "/", icon: HomeIcon, current: false },
-    { name: "Recept", to: "/recepies", icon: CakeIcon, current: false },
+    { name: "Recept", to: "/recipes", icon: CakeIcon, current: false },
     { name: "Mina sidor", to: "/my-pages", icon: UserIcon, current: false },
   ]);
 
@@ -88,7 +90,7 @@ export default function Header() {
                     </div>
                   </Transition.Child>
                   {/* Sidebar component */}
-                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-recepievaultred px-6 pb-4">
+                  <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-recipevaultred px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
@@ -137,7 +139,7 @@ export default function Header() {
 
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-recepievaultred px-6 pb-4">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-recipevaultred px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
                 className="h-8 w-auto"

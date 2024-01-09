@@ -112,7 +112,7 @@ const LoginPage = () => {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-recepievaultred px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-recepievaultred"
+              className="flex w-full justify-center rounded-md bg-recipevaultred px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-recipevaultred"
             >
               Logga in
             </button>

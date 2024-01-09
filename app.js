@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/recepieVaultDB')
+mongoose.connect('mongodb://localhost/recipeVaultDB')
   .then(() => console.log('Ansluten till MongoDB.'))
   .catch(err => console.error('Kunde inte ansluta till MongoDB.', err));
 
@@ -22,12 +22,12 @@ app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
 // Import routes
-const recepiesRoutes = require('./routes/recepies');
+const recipesRoutes = require('./routes/recipes');
 const usersRoutes = require('./routes/users');
 const authRoutes = require('./routes/auth');
 
 // Use routes
-app.use('/recepies', recepiesRoutes);
+app.use('/recipes', recipesRoutes);
 app.use('/users', usersRoutes);
 app.use('/auth', authRoutes);
 

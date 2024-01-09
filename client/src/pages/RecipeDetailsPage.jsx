@@ -7,7 +7,7 @@ const RecipeDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    API.get(`recepies/${id}`)
+    API.get(`recipes/${id}`)
       .then((response) => {
         setRecipe(response.data);
       })

@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import RecepiesPage from "./pages/RecepiesPage";
+import RecipesPage from "./pages/RecipesPage";
 import UserPage from "./pages/UserPage";
-import RecepieDetailsPage from "./pages/RecepieDetailsPage";
+import RecipeDetailsPage from "./pages/RecipeDetailsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AddRecipePage from "./pages/AddRecipePage";
 
 function App() {
   return (
@@ -17,8 +18,9 @@ function App() {
           <div className="lg:pl-72 px-4 lg:px-8 py-4 bg-neutral-100">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/recepies" element={<RecepiesPage />} />
+              <Route path="/recipes" element={<RecipesPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
               <Route
                 path="/my-pages"
                 element={
@@ -27,7 +29,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/recepies/:id" element={<RecepieDetailsPage />} />
+              <Route
+                path="/add-recipes"
+                element={
+                  <ProtectedRoute>
+                    <AddRecipePage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </div>
         </div>

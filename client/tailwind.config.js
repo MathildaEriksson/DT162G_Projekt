@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        recepievaultred: '#8D0000',
+        recipevaultred: '#8D0000',
       },
       fontFamily: {
         'merriweather': ['Merriweather', 'serif'], 

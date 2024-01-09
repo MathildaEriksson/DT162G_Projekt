@@ -1,7 +1,7 @@
 //Mathilda Eriksson, DT162G, HT23
 const mongoose = require('mongoose');
 
-const recepieSchema = new mongoose.Schema({
+const recipeSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -20,7 +20,7 @@ const recepieSchema = new mongoose.Schema({
     }
   ], 
   instructions: [String], // Array of strings for step by step instructions
-  image: String, // URL to recepie image
+  image: String, // URL to recipe image
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -28,6 +28,6 @@ const recepieSchema = new mongoose.Schema({
   }, 
 }, { timestamps: true });
 
-const Recepie = mongoose.model('Recepie', recepieSchema);
+const Recipe = mongoose.model('Recipe', recipeSchema);
 
-module.exports = Recepie;
+module.exports = Recipe;

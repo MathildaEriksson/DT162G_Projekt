@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
-const Recepie = require("../models/recepie.model");
+const Recipe = require("../models/recipe.model");
 const verifyToken = require("../middleware/verifyToken");
 const multer = require("multer");
 const path = require("path");
@@ -23,17 +23,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// GET Show all recepies
+// GET Show all recipes
 router.get("/", async (req, res) => {
   try {
-    const recepies = await Recepie.find().populate("createdBy", "name");
-    res.json(recepies);
+    const recipes = await Recipe.find().populate("createdBy", "name");
+    res.json(recipes);
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av recept.");
   }
 });
 
-// GET search recepie (only name)
+// GET search recipe (only name)
 router.get("/search", async (req, res) => {
   try {
     const searchQuery = req.query.name; // Get search-term from query-parameter 'name'
@@ -44,77 +44,77 @@ router.get("/search", async (req, res) => {
 
     // Use regex to search without case sensitivity
     const regex = new RegExp(searchQuery, "i");
-    const recepies = await Recepie.find({ name: { $regex: regex } }).populate(
+    const recipes = await Recipe.find({ name: { $regex: regex } }).populate(
       "createdBy",
       "name"
     );
 
-    if (recepies.length === 0) {
+    if (recipes.length === 0) {
       return res
         .status(404)
         .send("Inga recept hittades med det angivna namnet.");
     }
 
-    res.json(recepies);
+    res.json(recipes);
   } catch (error) {
     res.status(500).send("Serverfel vid sökning av recept: " + error.message);
   }
 });
 
 // GET logged in users recipes
-router.get("/myrecepies", verifyToken, async (req, res) => {
+router.get("/myrecipes", verifyToken, async (req, res) => {
   try {
     const userId = req.user._id;
-    const recepies = await Recepie.find({ createdBy: userId }).populate("createdBy", "name");
+    const recipes = await Recipe.find({ createdBy: userId }).populate("createdBy", "name");
 
-    res.json(recepies); 
+    res.json(recipes); 
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av användarens recept.");
   }
 });
 
-// GET Show recepie with specific ID
+// GET Show recipe with specific ID
 router.get("/:id", async (req, res) => {
   try {
-    const recepie = await Recepie.findById(req.params.id).populate(
+    const recipe = await Recipe.findById(req.params.id).populate(
       "createdBy",
       "name"
     );
-    if (!recepie) return res.status(404).send("Receptet hittades inte.");
-    res.json(recepie);
+    if (!recipe) return res.status(404).send("Receptet hittades inte.");
+    res.json(recipe);
   } catch (error) {
     res.status(500).send("Serverfel vid hämtning av recept.");
   }
 });
 
-// DELETE Delete recepie with specific ID
+// DELETE Delete recipe with specific ID
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
-    const recepie = await Recepie.findById(req.params.id);
+    const recipe = await Recipe.findById(req.params.id);
 
-    if (!recepie) {
+    if (!recipe) {
       return res.status(404).send("Receptet hittades inte.");
     }
 
-    //Check if logged in user is the creator of the recepie
-    if (recepie.createdBy.toString() !== req.user._id) {
+    //Check if logged in user is the creator of the recipe
+    if (recipe.createdBy.toString() !== req.user._id) {
       return res
         .status(403)
         .send("Åtkomst nekad. Du kan endast ta bort recept du själv skapat.");
     }
 
-    await Recepie.findByIdAndDelete(req.params.id);
+    await Recipe.findByIdAndDelete(req.params.id);
     res.send("Receptet har raderats.");
   } catch (error) {
     res.status(500).send("Serverfel vid radering av recept.");
   }
 });
 
-// POST Add recepie
+// POST Add recipe
 router.post("/", verifyToken, upload.single("image"), async (req, res) => {
   let imagePath = "";
   if (req.file) {
-    imagePath = req.file.path;
+    imagePath = req.file.filename;
   }
 
   // Convert ingredients from string to object
@@ -123,19 +123,25 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
     ingredients = JSON.parse(ingredients);
   }
 
-  const newRecepie = new Recepie({
+  // Convert ingridients back to an array
+  let instructions = [];
+  if (typeof req.body.instructions === "string") {
+    instructions = JSON.parse(req.body.instructions);
+  }
+
+  const newRecipe = new Recipe({
     name: req.body.name,
     category: req.body.category,
     ingredients: ingredients, // Should be an array of objects with name, amount and unit
-    instructions: req.body.instructions, // Should be an array of strings
+    instructions: instructions, // Should be an array of strings
     image: imagePath,
     createdBy: req.user._id,
   });
 
   try {
-    // Saves recepie in db
-    const savedRecepie = await newRecepie.save();
-    res.status(201).json(savedRecepie);
+    // Saves recipe in db
+    const savedRecipe = await newRecipe.save();
+    res.status(201).json(savedRecipe);
   } catch (error) {
     // If something goes wrong, remove uploaded file
     if (req.file) {
@@ -150,13 +156,13 @@ router.post("/", verifyToken, upload.single("image"), async (req, res) => {
 // PUT update recipe with specific ID
 router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
   try {
-    const recepieToUpdate = await Recepie.findById(req.params.id);
-    if (!recepieToUpdate) {
+    const recipeToUpdate = await Recipe.findById(req.params.id);
+    if (!recipeToUpdate) {
       return res.status(404).send("Receptet hittades inte.");
     }
 
-    //Check if logged in user is the creator of the recepie
-    if (recepieToUpdate.createdBy.toString() !== req.user._id) {
+    //Check if logged in user is the creator of the recipe
+    if (recipeToUpdate.createdBy.toString() !== req.user._id) {
       return res
         .status(403)
         .send("Åtkomst nekad. Du kan endast redigera recept du själv skapat.");
@@ -168,22 +174,22 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       ingredients = JSON.parse(ingredients);
     }
 
-    let imagePath = recepieToUpdate.image; // Keep current image as standard
+    let imagePath = recipeToUpdate.image; // Keep current image as standard
 
     // If a new image is uploaded, uppdate path and remove old image
     if (req.file) {
       imagePath = req.file.path;
 
       // Remove old image if it exists
-      if (recepieToUpdate.image) {
-        fs.unlink(path.join(__dirname, "..", recepieToUpdate.image), (err) => {
+      if (recipeToUpdate.image) {
+        fs.unlink(path.join(__dirname, "..", recipeToUpdate.image), (err) => {
           if (err) console.error("Fel vid borttagning av gammal bild: ", err);
         });
       }
     }
 
-    // Update recepie
-    const updatedRecepie = await Recepie.findByIdAndUpdate(
+    // Update recipe
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
       req.params.id,
       {
         name: req.body.name,
@@ -195,7 +201,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    res.json(updatedRecepie);
+    res.json(updatedRecipe);
   } catch (error) {
     if (error.name === "ValidationError") {
       res.status(400).send("Valideringsfel: " + error.message);
