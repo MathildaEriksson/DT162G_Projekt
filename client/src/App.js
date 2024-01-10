@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AddRecipePage from "./pages/AddRecipePage";
 import EditRecipePage from "./pages/EditRecipePage";
 import SearchResultsPage from "./pages/SearchResultsPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
               <Route path="/search-results" element={<SearchResultsPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               <Route
                 path="/edit-recipe/:id"
                 element={

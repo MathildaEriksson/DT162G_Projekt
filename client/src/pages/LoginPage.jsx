@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import API from "../services/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { XCircleIcon } from "@heroicons/react/20/solid";
 
 const LoginPage = () => {
@@ -20,7 +20,7 @@ const LoginPage = () => {
       });
       localStorage.setItem("token", response.data);
       setErrorMessage("");
-      navigate("/my-pages"); 
+      navigate("/my-pages");
     } catch (error) {
       if (error.response && error.response.data) {
         setErrorMessage(error.response.data);
@@ -103,7 +103,7 @@ const LoginPage = () => {
                 </div>
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">
-                  {errorMessage}
+                    {errorMessage}
                   </h3>
                 </div>
               </div>
@@ -121,12 +121,12 @@ const LoginPage = () => {
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Inte medlem än?{" "}
-          <a
-            href="#"
+          <Link
+            to="/register"
             className="font-semibold leading-6 text-green-900 hover:text-green-950"
           >
             Registrera dig här
-          </a>
+          </Link>
         </p>
       </div>
     </div>

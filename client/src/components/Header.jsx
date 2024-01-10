@@ -12,6 +12,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { useLocation, useNavigate } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -189,7 +190,6 @@ export default function Header() {
             </nav>
           </div>
         </div>
-
         <div className="lg:pl-72">
           <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button
@@ -200,7 +200,7 @@ export default function Header() {
               <span className="sr-only">Open sidebar</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
-            <div className="flex gap-x-4 self-stretch lg:gap-x-6">
+            <div className="flex flex-grow gap-x-4 self-stretch lg:gap-x-6">
               <form
                 className="relative flex flex-1"
                 onSubmit={handleSearchSubmit}
@@ -216,7 +216,7 @@ export default function Header() {
                   <input
                     id="search-field"
                     className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
-                    placeholder="Search..."
+                    placeholder="Sök..."
                     type="search"
                     name="search"
                     value={searchTerm}
@@ -232,6 +232,9 @@ export default function Header() {
                   </div>
                 </div>
               </form>
+              <div className="flex items-center">
+                <LogoutButton />
+              </div>
             </div>
           </div>
         </div>
