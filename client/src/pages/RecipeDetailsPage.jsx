@@ -23,8 +23,16 @@ const RecipeDetails = () => {
   }, [id]);
 
   const jwtToken = localStorage.getItem("token");
-  const decodedToken = jwtDecode(jwtToken);
-  const userId = decodedToken._id;
+  let userId = null;
+
+  if (jwtToken) {
+    try {
+      const decodedToken = jwtDecode(jwtToken);
+      userId = decodedToken._id;
+    } catch (error) {
+      console.error("Token decoding error:", error);
+    }
+  }
 
   const handleEdit = () => {
     navigate(`/edit-recipe/${id}`); 
