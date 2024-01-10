@@ -9,8 +9,9 @@ import {
   UserIcon,
   XMarkIcon,
   CakeIcon,
+  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -24,6 +25,8 @@ export default function Header() {
     { name: "Recept", to: "/recipes", icon: CakeIcon, current: false },
     { name: "Mina sidor", to: "/my-pages", icon: UserIcon, current: false },
   ]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setNavigation((navigation) =>
@@ -33,6 +36,11 @@ export default function Header() {
       }))
     );
   }, [location]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/search-results?query=${searchTerm}`);
+  };
 
   return (
     <>
@@ -94,7 +102,7 @@ export default function Header() {
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
-                        src={require('../img/logo.png')}
+                        src={require("../img/logo.png")}
                         alt="Your Company"
                       />
                     </div>
@@ -143,7 +151,7 @@ export default function Header() {
             <div className="flex h-16 shrink-0 items-center">
               <img
                 className="h-8 w-auto"
-                src={require('../img/logo.png')}
+                src={require("../img/logo.png")}
                 alt="Your Company"
               />
             </div>
@@ -192,6 +200,39 @@ export default function Header() {
               <span className="sr-only">Open sidebar</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
+            <div className="flex gap-x-4 self-stretch lg:gap-x-6">
+              <form
+                className="relative flex flex-1"
+                onSubmit={handleSearchSubmit}
+              >
+                <div className="flex items-center">
+                  <label htmlFor="search-field" className="sr-only">
+                    Search
+                  </label>
+                  <MagnifyingGlassIcon
+                    className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="search-field"
+                    className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                    placeholder="Search..."
+                    type="search"
+                    name="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <div>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center rounded-md bg-green-900 px-3 py-2 ml-2 text-sm font-semibold text-white shadow-sm hover:bg-green-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900"
+                    >
+                      Sök
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
