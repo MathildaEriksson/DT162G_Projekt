@@ -197,7 +197,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
 
     // If a new image is uploaded, uppdate path and remove old image
     if (req.file) {
-      imagePath = req.file.path;
+      imagePath = req.file.filename;
 
       // Remove old image if it exists
       if (recipeToUpdate.image) {

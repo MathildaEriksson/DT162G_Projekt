@@ -14,7 +14,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post("http://localhost:3000/auth/login", {
+      const response = await API.post("auth/login", {
         email,
         password,
       });
