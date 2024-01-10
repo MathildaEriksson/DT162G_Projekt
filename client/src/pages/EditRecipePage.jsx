@@ -1,8 +1,8 @@
 //Mathilda Eriksson, DT162G, HT23
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../services/axios";
-import { useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   PlusIcon,
   CheckIcon,
@@ -11,18 +11,30 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 
-const AddRecipePage = () => {
+const EditRecipePage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     category: "",
-    ingredients: [{ name: "", amount: "", unit: "" }],
-    instructions: [""],
+    ingredients: [],
+    instructions: [],
     image: null,
   });
-
-  const navigate = useNavigate();
-  const [formErrors, setFormErrors] = useState({});
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await API.get(`/recipes/${id}`);
+        setFormData(response.data);
+      } catch (err) {
+        setError("Kunde inte hämta receptet");
+      }
+    };
+    fetchRecipe();
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -127,10 +139,10 @@ const AddRecipePage = () => {
     }
 
     try {
-      const response = await API.post("/recipes", data, {
+      await API.put(`/recipes/${id}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      navigate("/my-pages");
+      navigate(`/recipes/${id}`);
     } catch (error) {
       setError(error.response?.data?.message || "Ett okänt fel inträffade");
     }
@@ -139,7 +151,7 @@ const AddRecipePage = () => {
   return (
     <div className="lg:pl-10 pl-2">
       <h2 className="leading-7 text-gray-900 text-3xl font-merriweather pb-6">
-        Lägg till recept
+        Redigera recept
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="pb-6">
@@ -306,6 +318,10 @@ const AddRecipePage = () => {
             onChange={handleImageChange}
             className="block text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-recipevaultred file:text-white hover:file:bg-red-950 hover:cursor-pointer hover:file:cursor-pointer"
           />
+          <div className="text-sm text-slate-500 pt-2">
+            Lägg till en ny bild om bilden ska uppdateras, annars behålls gamla
+            bilden.
+          </div>
         </div>
         <div className="flex justify-end max-w-xl">
           {error && (
@@ -325,7 +341,7 @@ const AddRecipePage = () => {
             className="inline-flex items-center rounded-md bg-green-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-900"
           >
             <CheckIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Lägg till recept
+            Spara recept
           </button>
         </div>
       </form>
@@ -333,4 +349,4 @@ const AddRecipePage = () => {
   );
 };
 
-export default AddRecipePage;
+export default EditRecipePage;
