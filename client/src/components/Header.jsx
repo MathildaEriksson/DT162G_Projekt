@@ -28,6 +28,7 @@ export default function Header() {
   ]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     setNavigation((navigation) =>
@@ -232,9 +233,11 @@ export default function Header() {
                   </div>
                 </div>
               </form>
-              <div className="flex items-center">
-                <LogoutButton />
-              </div>
+              {token && (
+                <div className="flex items-center">
+                  <LogoutButton />
+                </div>
+              )}
             </div>
           </div>
         </div>
