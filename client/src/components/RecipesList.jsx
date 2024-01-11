@@ -1,5 +1,7 @@
+//Mathilda Eriksson, DT162G, HT23
 import { Link } from "react-router-dom";
 
+// Takes recipes as a prop and writes out the recipes in a list
 const RecipesList = ({ recipes }) => {
 
   return (

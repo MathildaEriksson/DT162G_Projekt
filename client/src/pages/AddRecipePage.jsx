@@ -106,12 +106,12 @@ const AddRecipePage = () => {
       return;
     }
 
-    // Filter out empty ingredients
+    // Filter out empty ingredients (not used now, as the fields are required)
     const filteredIngredients = formData.ingredients.filter(
       (ingredient) => ingredient.name && ingredient.amount && ingredient.unit
     );
 
-    // Filter out empty instructions
+    // Filter out empty instructions (not used now, as the fields are required)
     const filteredInstructions = formData.instructions.filter((instruction) =>
       instruction.trim()
     );
