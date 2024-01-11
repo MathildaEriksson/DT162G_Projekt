@@ -201,7 +201,7 @@ router.put("/:id", verifyToken, upload.single("image"), async (req, res) => {
 
       // Remove old image if it exists
       if (recipeToUpdate.image) {
-        fs.unlink(path.join(__dirname, "..", recipeToUpdate.image), (err) => {
+        fs.unlink(path.join(__dirname, "../uploads", recipeToUpdate.image), (err) => {
           if (err) console.error("Fel vid borttagning av gammal bild: ", err);
         });
       }
